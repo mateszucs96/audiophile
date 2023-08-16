@@ -1,34 +1,57 @@
 /* eslint-disable react/jsx-no-target-blank */
-import { useState } from 'react';
-import reactLogo from './assets/react.svg';
-import viteLogo from '/vite.svg';
+import { useEffect, useState } from 'react';
 import './App.css';
 
-function App() {
-	const [count, setCount] = useState(0);
+type Viewports = {
+	desktop: string;
+	tablet: string;
+	mobile: string;
+};
 
+type ProductData = {
+	category: string;
+	categoryImage: Viewports;
+	description: string;
+	features: string;
+	gallery: {
+		first: Viewports;
+		second: Viewports;
+		third: Viewports;
+	};
+	id: number;
+	image: Viewports;
+	includes: { quantity: number; item: string }[];
+	name: string;
+	new: boolean;
+	others: { image: Viewports; slug: string; name: string }[];
+	price: number;
+	slug: string;
+};
+
+function App() {
+	const [data, setData] = useState<ProductData[]>([]);
+
+	useEffect(() => {
+		fetchData();
+	}, []);
+
+	const fetchData = async () => {
+		const res = await fetch('../starter-code/data.json');
+		const data = await res.json();
+		console.log(data);
+		setData(data);
+	};
 	return (
 		<>
-			<div>
-				<a href="https://vitejs.dev" target="_blank">
-					<img src={viteLogo} className="logo" alt="Vite logo" />
-				</a>
-				<a href="https://react.dev" target="_blank">
-					<img src={reactLogo} className="logo react" alt="React logo" />
-				</a>
-			</div>
-			<h1>Vite + React</h1>
-			<div className="card">
-				<button onClick={() => setCount((count) => count + 1)}>
-					count is {count}
-				</button>
-				<p>
-					Edit <code>src/App.tsx</code> and save to test HMR
-				</p>
-			</div>
-			<p className="read-the-docs">
-				Click on the Vite and React logos to learn more
-			</p>
+			<ul>
+				{data.map((product: ProductData, i: number) => (
+					<li key={i}>
+						<h2>{product.id}</h2>
+						<h1>{product.category}</h1>
+						<img src={product.gallery.third.desktop}></img>
+					</li>
+				))}
+			</ul>
 		</>
 	);
 }
